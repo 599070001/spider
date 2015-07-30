@@ -12,13 +12,13 @@ http://www.aaw8.com/Api/DomainApi.aspx?domain=com
 '''
 import pinyin
 import urllib2
-import time
 import io
 import sys
+import random
 
 
 if len(sys.argv) == 1:
-	print '请带上 [音节数] 和 [延迟] 参数'
+	print '请带上 [音节数]  [类型:font letter]  [输出html] 参数'
 	exit()
 	
 #检测参数
@@ -26,11 +26,15 @@ if(1):
 	suffix = '.com'
 	url = 'http://www.aaw8.com/Api/DomainApi.aspx?domain='
 	font_num = sys.argv[1]
+	domain_type = 'font'
+	print_html = 0
+	sample = 'abcdefghigklmnopqrstuvwxyz0123456789'
+
 	if sys.argv[2]:
+		domain_type = sys.argv[2]
+	if int(sys.argv[3]):
 		print_html = 1
-	else:
-		print_html = 0
-	print font_num
+	
 
 
 #拼音组件的初始化
@@ -42,12 +46,13 @@ if(1):
 #检测程序
 def domainCheckRun(files = "domain.txt"):
 	handle = io.open(files,"ab")
-	sleep_time = float(sys.argv[2])
-	print sleep_time
 	try:
 		while 1:
-			time.sleep(sleep_time)
-			domain = py.randFontPinYin(int(font_num))+suffix
+			if domain_type == 'font':
+				host = py.randFontPinYin(int(font_num))
+			elif domain_type == 'letter':
+				host = "".join(random.sample(sample, int(font_num)))
+			domain = host+suffix
 			resp = urllib2.urlopen(url+domain)
 			result =  resp.read()
 			if(print_html):
